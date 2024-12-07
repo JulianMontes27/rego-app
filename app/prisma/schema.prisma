@@ -1,0 +1,180 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+//run npx prisma generate so the prisma client gets updated with new models
+//then run npx prisma db push so that the Mongodb is updated
+model User {
+  id            String          @id @default(auto()) @map("_id") @db.ObjectId
+  name          String?
+  email         String         @unique
+  emailVerified DateTime?
+  image         String?
+
+  role          String?
+  
+  accounts      Account[]
+  sessions      Session[]
+  
+  // // Optional for WebAuthn support
+  // Authenticator Authenticator[]
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+ 
+model Account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.String
+  access_token      String? @db.String
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.String
+  session_state     String?
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+ 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+//tell server that the user is logged in
+model Session {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionToken String   @unique
+  userId       String   @db.ObjectId
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  createdAt DateTime @default(now()) //cuando el usuario inicia sesion
+  updatedAt DateTime @updatedAt
+
+  @@map("sessions")
+}
+
+ 
+model VerificationToken {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String
+  token      String
+  expires    DateTime
+ 
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+model Restaurant {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  location    String
+  tables      Table[]    // A restaurant has many tables
+  ownerId     String     //userId (admins)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@map("restaurants")
+
+}
+
+// A Table has a Bill[] relation, but we will only have one active unpaid bill at a time.
+model Table {
+  id           String     @id @default(uuid()) @map("_id") // Use uuid as the default value for the 'id' field
+  tableNumber  String       // Unique table number per Restaurant
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id]) //relation to the Restaurant
+  restaurantId String     @db.ObjectId
+
+  bills        Bill[]     // A table can have multiple bills over time
+  qrCodeUrl    String?    // URL pointing to the QR code for this table
+
+  @@unique([tableNumber, restaurantId]) // Ensures table numbers are unique within each restaurant
+
+  deletedAt    DateTime?  // Nullable to indicate if it has been "soft deleted"
+
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@map("tables")
+
+}
+
+model Bill {
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  table        Table       @relation(fields: [tableId], references: [id])
+  tableId      String
+
+  totalAmount  Int //total amount to be paid by the client(s)
+  isPaid       Boolean     @default(false)
+
+  orders       Order[]
+  server       String
+
+  paidAmount   Int    @default(0)     // Tracks total contributions made by clients
+    
+  billShares  BillShare[] // New relation for bill splits
+
+  payment      Payment?    
+
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@map("bills")
+}
+
+model Order {
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  bill         Bill        @relation(fields: [billId], references: [id])
+  billId       String      @db.ObjectId
+  name         String      
+  quantity     Int         
+  price        Int       
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@map("orders")
+}
+
+model Payment {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  billId      String   @unique @db.ObjectId
+  amount      Float
+  paymentDate DateTime @default(now())
+  date_approved String?
+  paymentId   Int   
+  bill        Bill     @relation(fields: [billId], references: [id])
+
+  @@map("payments")
+}
+
+model BillShare {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  billId     String   @db.ObjectId
+  guestId    String   // Unique identifier for each guest (e.g., "Guest 1")
+  amount     Int    // Amount this guest is responsible for
+  paid       Boolean  @default(false)
+  paidAt     String?
+
+  bill       Bill     @relation(fields: [billId], references: [id])
+
+  @@map("bill_shares")
+}
