@@ -6,6 +6,10 @@ import ModalProvider from "@/providers/modal-provider";
 import { Toaster } from "react-hot-toast";
 import { SocketProvider } from "@/providers/socket-provider";
 
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import { extractRouterConfig } from "uploadthing/server";
+import { ourFileRouter, OurFileRouter } from "./api/uploadthing/core";
+
 // import { Analytics } from "@vercel/analytics/react";
 // import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -21,9 +25,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Paternina-Montes",
-  description:
-    "Streamline restaurant billing with our QR code-based payment system. Allow customers to scan, split bills, and pay online, while admins track orders and sales with an intuitive dashboard. No account creation needed, just fast and secure payments.",
+  title: "Rego",
+  description: "CRM tailored for small business owners.",
 };
 
 export default function RootLayout({
@@ -44,6 +47,16 @@ export default function RootLayout({
         >
           <SocketProvider>
             <ModalProvider />
+            <NextSSRPlugin
+              /**
+               * The `extractRouterConfig` will extract **only** the route configs
+               * from the router to prevent additional information from being
+               * leaked to the client. The data passed to the client is the same
+               * as if you were to fetch `/api/uploadthing` directly.
+               */
+              routerConfig={extractRouterConfig(ourFileRouter)}
+            />
+
             {children}
           </SocketProvider>
           {/* <Analytics /> */}

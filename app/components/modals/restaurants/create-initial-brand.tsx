@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 
 import toast from "react-hot-toast";
 
-// import FileUploader from "@/components/file-uploader";
+import FileUploader from "@/components/file-uploads/file-uploader";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -24,52 +24,46 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 
-const CreateInitialRestaurantFormSchema = z.object({
+const CreateBrandFormSchema = z.object({
   name: z.string().min(2, {
-    message: "Restaurant name must be at least 2 characters.",
+    message: "Server name must be at least 2 characters.",
   }),
-  location: z.string().min(2, {
-    message: "Restaurant location must be at least 2 characters.",
+  logoUrl: z.string().min(1, {
+    message: "Server image is required.",
   }),
-  //   imgUrl: z.string().min(1, {
-  //     message: "Server image is required.",
-  //   }),
 });
 
-type CreateInitialRestaurantType = z.infer<
-  typeof CreateInitialRestaurantFormSchema
->;
+type CreateBrandFormType = z.infer<typeof CreateBrandFormSchema>;
 
 export default function CreateServerModal() {
-  //get the current state of the modal provider store
   const { isOpen, onClose, modalType } = useModalStore();
-  const router = useRouter();
-
   const handleClose = () => {
     onClose();
   };
+  const router = useRouter();
 
   // 1. Define your form.
-  const form = useForm<CreateInitialRestaurantType>({
-    resolver: zodResolver(CreateInitialRestaurantFormSchema),
+  const form = useForm<CreateBrandFormType>({
+    resolver: zodResolver(CreateBrandFormSchema),
     defaultValues: {
       name: "",
-      location: "",
-      //   imgUrl: "",
+      logoUrl: "",
     },
   });
 
   // 2. Define a submit handler.
-  async function onSubmit(values: CreateInitialRestaurantType) {
+  async function onSubmit(values: CreateBrandFormType) {
     try {
-      await axios.post(`/api/restaurants`, values);
+      await axios.post(`/api/brands`, values);
       form.reset();
       router.refresh();
       toast.success("Created succesfully.");
@@ -85,46 +79,38 @@ export default function CreateServerModal() {
   return (
     <>
       <Dialog
-        open={isOpen && modalType === "create-initial-restaurant"}
+        open={isOpen && modalType === "create-initial-brand"}
         onOpenChange={handleClose}
       >
         <DialogContent className="bg-white text-black sm:max-w-[425px] overflow-hidden rounded-md">
           <DialogHeader className="py-3 px-3">
-            <DialogTitle className="font-bold text-2xl text-center">
-              Crea un Restaurante
+            <DialogTitle className="font-bold text-2xl mb-2">
+              Create a Brand
             </DialogTitle>
-            {/* <DialogDescription className="flex flex-col w-full items-star gap-2">
-              <span className="text-[16px] font-semibold ">
-                Start working together with other devs!
-              </span>
-              <span>
-                Customize your server. Be sure to make it unique and inviting to
-                others!
-              </span>
-            </DialogDescription> */}
+            <DialogDescription className="flex flex-col w-full items-star gap-2"></DialogDescription>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              {/* <FormField
+              <FormField
                 control={form.control}
-                name="imgUrl"
+                name="logoUrl"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-5">
-                    <FormLabel>Image URL</FormLabel>
+                    <FormLabel>Logo</FormLabel>
                     <FormControl>
                       <FileUploader
-                        endpoint="serverImage"
+                        endpoint="brandLogoImage"
                         value={field.value}
                         onChange={field.onChange}
                       />
                     </FormControl>
                     <FormDescription>
-                      This is your Server&apos;s public image.
+                      Represent your Brand with a logo.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
-              /> */}
+              />
               <FormField
                 control={form.control}
                 name="name"
@@ -134,35 +120,12 @@ export default function CreateServerModal() {
                     <FormControl>
                       <Input
                         disabled={form.formState.isSubmitting}
-                        placeholder="Mi nuevo restaurante"
+                        placeholder="Rego"
                         className="bg-white"
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription>
-                      El nombre de tu restaurante
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="location"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Ubicación</FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={form.formState.isSubmitting}
-                        placeholder="Calle 1b #1-1"
-                        className="bg-white"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      La ubicación de tu restaurante
-                    </FormDescription>
+                    <FormDescription>Name your Brand.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -173,7 +136,7 @@ export default function CreateServerModal() {
                 type="submit"
                 className="w-full text-white bg-indigo-500 hover:bg-indigo-500/90"
               >
-                Crear restaurante
+                Create Brand
               </Button>
             </form>
           </Form>

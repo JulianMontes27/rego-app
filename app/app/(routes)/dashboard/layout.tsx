@@ -1,7 +1,5 @@
-import React from "react";
-
 import Sidebar from "@/components/dashboard/dashboard-sidebar";
-import { User as UserIcon, House, ChefHat } from "lucide-react";
+import { User as UserIcon, House, ChefHat, Building2 } from "lucide-react";
 
 import { MobileSidebar } from "@/components/dashboard/mobile-sidebar";
 
@@ -22,14 +20,19 @@ export const routes: RouteList = [
     icon: <House />,
   },
   {
-    href: `/dashboard/restaurants`,
-    title: "Restaurantes",
+    href: `/dashboard/brands`,
+    title: "Brands",
+    icon: <Building2 />,
+  },
+  {
+    href: `/dashboard/stores`,
+    title: "Stores",
     icon: <ChefHat />,
   },
 
   {
     href: `/dashboard/account`,
-    title: "Cuenta",
+    title: "Account",
     icon: <UserIcon />,
   },
 ];

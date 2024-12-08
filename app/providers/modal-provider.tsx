@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 
-import CreateInitialRestaurant from "@/components/modals/restaurants/create-initial-res";
+import CreateInitialRestaurant from "@/components/modals/restaurants/create-initial-brand";
 import CreateTableModal from "@/components/modals/create-table";
 import InitiateBillModal from "@/components/modals/initiate-bill";
 import AddOrderModal from "@/components/modals/add-order-modal";
