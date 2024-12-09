@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { RouteList } from "@/app/(routes)/dashboard/layout";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -14,7 +13,6 @@ interface RoutesShowcaseProps {
 const RouteShowcase: React.FC<RoutesShowcaseProps> = ({ routes }) => {
   const pathname = usePathname();
   // const activeRoute = pathname.split("/")[3];
-
   return (
     <section>
       <ul className="flex flex-col gap-9">

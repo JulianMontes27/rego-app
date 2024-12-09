@@ -52,6 +52,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = async ({
           <div className="flex flex-row gap-4 bg-white ">
             <MobileSidebar routes={routes} />
             <h1>LOGO</h1>
+            
           </div>
           <div className="flex-1 flex justify-end">Data</div>
         </div>

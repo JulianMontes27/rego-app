@@ -1,12 +1,10 @@
 "use client";
 
 import { useState } from "react";
-
-import { Restaurant } from "@prisma/client";
-
+import { useParams, useRouter } from "next/navigation";
 import useModalStore from "@/hooks/use-store-modal";
 
-import { useParams, useRouter } from "next/navigation";
+import { Store } from "@prisma/client";
 
 import {
   Check,
@@ -35,10 +33,10 @@ type PopoverTriggerProps = React.ComponentPropsWithoutRef<
   typeof PopoverTrigger
 >;
 interface StoreComboboxProps extends PopoverTriggerProps {
-  restaurants: Restaurant[];
+  stores: Store[];
 }
 
-export function StoreCombobox({ restaurants = [] }: StoreComboboxProps) {
+export function StoreCombobox({ stores = [] }: StoreComboboxProps) {
   const [open, setOpen] = useState(false);
 
   const params = useParams();
@@ -46,7 +44,7 @@ export function StoreCombobox({ restaurants = [] }: StoreComboboxProps) {
   const storeModal = useModalStore();
 
   //format the Items<Restaurant> to only use the name prop and id
-  const routes = restaurants.map((res) => ({
+  const routes = stores.map((res) => ({
     label: res.name,
     value: res.id,
   }));
@@ -124,11 +122,11 @@ export function StoreCombobox({ restaurants = [] }: StoreComboboxProps) {
                 className="font-bold flex gap-2 cursor-pointer"
                 onSelect={() => {
                   //activate the create-store modal
-                  storeModal.onOpen("create-initial-restaurant");
+                  storeModal.onOpen("create-store");
                 }}
               >
                 <PlusSquare />
-                Crear nuevo restaurante
+                Create Store
               </CommandItem>
             </CommandGroup>
           </CommandList>

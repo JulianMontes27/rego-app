@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import TableCard from "@/components/dashboard/tables/table-card";
+import TableCard from "@/components/dashboard/tables/store-card";
 import { useSocketContext } from "@/providers/socket-provider";
 import { Restaurant, Table, Bill, Order } from "@prisma/client";
 import { AlertDestructive } from "@/components/dashboard/alert";

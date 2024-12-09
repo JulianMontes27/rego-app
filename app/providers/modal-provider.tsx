@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from "react";
 
-import CreateInitialRestaurant from "@/components/modals/restaurants/create-initial-brand";
+import CreateInitialRestaurant from "@/components/modals/brands/create-initial-brand";
 import CreateTableModal from "@/components/modals/create-table";
 import InitiateBillModal from "@/components/modals/initiate-bill";
 import AddOrderModal from "@/components/modals/add-order-modal";
 import ShowOrdersModal from "@/components/modals/show-orders-modal";
-import DeleteRestaurantModal from "@/components/modals/restaurants/delete-modal";
-import UpdateRestaurantModal from "@/components/modals/restaurants/update-restaurant-modal";
+import DeleteRestaurantModal from "@/components/modals/brands/delete-modal";
+import UpdateRestaurantModal from "@/components/modals/brands/update-restaurant-modal";
 import UpdateTableModal from "@/components/modals/tables/update-table-modal";
 import DeleteTableModal from "@/components/modals/tables/delete-table-modal";
 

@@ -11,21 +11,12 @@ const DashboardHomePage = async () => {
   if (!user) {
     redirect("/api/auth/signin");
   }
-  const res = await prisma.restaurant.findMany({
+  const res = await prisma.brand.findMany({
     where: {
       ownerId: user.id,
     },
     include: {
-      tables: {
-        include: {
-          bills: {
-            include: {
-              orders: true,
-              payment: true,
-            },
-          },
-        },
-      },
+      stores: true,
     },
   });
   if (!res) {
@@ -35,8 +26,7 @@ const DashboardHomePage = async () => {
   return (
     <div className="flex flex-col gap-3">
       <section className="w-full grid grid-cols-1  md:grid-cols-2 gap-3">
-        <DashboardCard data={res} type="total-bills-paid" />
-        <DashboardCard data={res} type="orders-per-restaurant" />
+      
       </section>
     </div>
   );

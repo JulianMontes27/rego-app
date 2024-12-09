@@ -1,5 +1,3 @@
-import React from "react";
-
 import { ModeToggle } from "../themes/theme-toggle";
 import RouteShowcase from "./route-showcase";
 import UserButton from "../auth/user-button";

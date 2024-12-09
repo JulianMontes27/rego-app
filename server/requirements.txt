@@ -1,0 +1,7 @@
+fastapi>=0.100.0
+uvicorn>=0.22.0
+python-multipart  # for file uploads
+pillow  # for image processing
+python-jose[cryptography]  # for JWT tokens
+passlib[bcrypt]  # for password hashing
+sqlalchemy  # for database operations

@@ -1,15 +1,14 @@
 "use client";
 
 import useModalStore from "@/hooks/use-store-modal";
-import { Restaurant, Table } from "@prisma/client";
+import { Brand, Store } from "@prisma/client";
 import { Settings, Trash2 } from "lucide-react";
-import React from "react";
 
 interface ActionBtnProps {
   action: "delete" | "update";
-  type: "restaurant" | "table";
-  restaurant?: Restaurant;
-  table?: Table;
+  type: "brand" | "store";
+  brand?: Brand;
+  store?: Store;
 }
 
 const actionTypeMap = {
@@ -20,23 +19,25 @@ const actionTypeMap = {
 const ActionBtn: React.FC<ActionBtnProps> = ({
   action,
   type,
-  restaurant,
-  table,
+  brand,
+  store,
 }) => {
   //get Global (zustand) modal state
   const { onOpen } = useModalStore();
+
   const modalAction =
-    type === "restaurant" && action === "delete"
-      ? "delete-restaurant"
-      : type === "restaurant" && action === "update"
-      ? "update-restaurant"
-      : type === "table" && action === "delete"
-      ? "delete-table"
-      : "update-table";
+    type === "brand" && action === "delete"
+      ? "delete-brand"
+      : type === "brand" && action === "update"
+      ? "update-brand"
+      : type === "store" && action === "delete"
+      ? "delete-store"
+      : "update-store";
+
   return (
     <button
       className="hover:scale-110 transition-all"
-      onClick={() => onOpen(modalAction, { restaurant, table })}
+      onClick={() => onOpen(modalAction, { brand, store })}
     >
       {actionTypeMap[action]}
     </button>

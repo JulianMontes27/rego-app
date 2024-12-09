@@ -1,24 +1,26 @@
-import { Bill, Brand, Store, Product, Order, Payment } from "@prisma/client";
+import { Bill, Brand, Store, Product, Order } from "@prisma/client";
 import { create } from "zustand";
 
 export type ModalType =
   | "create-initial-brand"
-  | "create-table"
+  | "create-store"
   | "create-order"
   | "initiate-bill"
   | "add-order"
   | "show-orders"
-  | "delete-restaurant"
-  | "update-restaurant"
-  | "delete-table"
-  | "update-table";
+  | "delete-brand"
+  | "update-brand"
+  | "delete-store"
+  | "update-store"
+  | "delete-product"
+  | "udpate-product";
 
 //items to send in a modal
 interface ModalData {
   brand?: Brand;
   store?: Store;
+  product?: Product;
   bill?: Bill;
-  Product?: Product;
   orders?: Order[];
 }
 
