@@ -1,6 +1,5 @@
 import { SignInBtn } from "@/components/auth/signin-btn";
 import Link from "next/link";
-import React from "react";
 import NavbarDropdownMenu from "./nav-dropdown";
 
 const Navbar = () => {
