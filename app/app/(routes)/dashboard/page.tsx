@@ -1,4 +1,3 @@
-import DashboardCard from "@/components/dashboard/home/dashboard-card";
 import getSession from "@/lib/get-session";
 import prisma from "@/lib/prisma";
 
@@ -25,9 +24,7 @@ const DashboardHomePage = async () => {
 
   return (
     <div className="flex flex-col gap-3">
-      <section className="w-full grid grid-cols-1  md:grid-cols-2 gap-3">
-      
-      </section>
+      <section className="w-full grid grid-cols-1  md:grid-cols-2 gap-3"></section>
     </div>
   );
 };

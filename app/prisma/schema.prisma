@@ -84,76 +84,22 @@ model VerificationToken {
   @@map("verification_tokens")
 }
 
-model Brand {
+model Farm {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   ownerId     String   @db.ObjectId
   name        String
   logo        String?
-  stores      Store[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   @@map("brands")
 }
 
-model Store {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  location    String
-  products    Product[]
-  brandId     String   @db.ObjectId
-  brand       Brand    @relation(fields: [brandId], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  @@map("stores")
-}
-
-model Product {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  serialNumber String   // Unique product identifier per Store
-  storeId      String   @db.ObjectId
-  store        Store    @relation(fields: [storeId], references: [id])
-  bills        Bill[]
-  qrCodeUrl    String?
-  deletedAt    DateTime?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  @@unique([serialNumber, storeId]) // Ensures serial number uniqueness within a store
-  @@map("products")
-}
-
-model Bill {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  productId    String   @db.ObjectId
-  product      Product  @relation(fields: [productId], references: [id])
-  totalAmount  Int
-  isPaid       Boolean  @default(false)
-  orders       Order[]
-  paidAmount   Int      @default(0)
-  payment      Payment?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  @@map("bills")
-}
-
-model Order {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  billId       String   @db.ObjectId
-  bill         Bill     @relation(fields: [billId], references: [id])
-  name         String
-  quantity     Int
-  price        Int
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  @@map("orders")
-}
-
-model Payment {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  billId       String   @unique @db.ObjectId
-  amount       Float
-  paymentDate  DateTime @default(now())
-  dateApproved String?
-  paymentId    Int
-  bill         Bill     @relation(fields: [billId], references: [id])
-  @@map("payments")
+model Task {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String @db.ObjectId
+  type      String
+  input     String
+  result    String?
+  createdAt DateTime @default(now())
+  status    String
 }
