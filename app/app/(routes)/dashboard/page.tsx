@@ -12,34 +12,6 @@ const DashboardHomePage = async () => {
   }
 
   try {
-    const fastApiTest = await fetch("http://localhost:8000/secure-data", {
-      credentials: "include",
-      headers: {
-        Cookie: headers().get("cookie") || "",
-        Accept: "application/json",
-      },
-      cache: "no-store",
-    });
-
-    if (!fastApiTest.ok) {
-      throw new Error(`HTTP error! status: ${fastApiTest.status}`);
-    }
-
-    const data = await fastApiTest.json();
-
-    const res = await prisma.brand.findMany({
-      where: {
-        ownerId: user.id,
-      },
-      include: {
-        stores: true,
-      },
-    });
-
-    if (!res) {
-      redirect("/");
-    }
-
     return (
       <div className="flex flex-col gap-3">
         <section className="w-full grid grid-cols-1 md:grid-cols-2 gap-3">

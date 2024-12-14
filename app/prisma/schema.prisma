@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -84,22 +78,52 @@ model VerificationToken {
   @@map("verification_tokens")
 }
 
+
 model Farm {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  ownerId     String   @db.ObjectId
   name        String
-  logo        String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  @@map("brands")
+  location    String?
+  size        String?    // in acres/hectares
+  userId      String    // foreign key
+  fields      Field[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("farms")
 }
 
-model Task {
-  id        String @id @default(auto()) @map("_id") @db.ObjectId
-  userId    String @db.ObjectId
-  type      String
-  input     String
-  result    String?
-  createdAt DateTime @default(now())
-  status    String
+model Field {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  size        Float?    // in acres/hectares
+  cropType    String
+  plantedDate DateTime?
+  farmId      String     @db.ObjectId
+  farm        Farm      @relation(fields: [farmId], references: [id])
+  scans       Scan[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("field")
+}
+
+model Scan {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  imageUrl        String
+  diagnosis       String?
+  confidence      Float?    // confidence score of the AI prediction
+  recommendations String[]
+  fieldId         String     @db.ObjectId
+  field           Field     @relation(fields: [fieldId], references: [id])
+  createdAt       DateTime  @default(now())
+  status          ScanStatus @default(PENDING)
+
+  @@map("scans")
+}
+
+enum ScanStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
 }

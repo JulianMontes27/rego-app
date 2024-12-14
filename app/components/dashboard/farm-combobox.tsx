@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import useModalStore from "@/hooks/use-store-modal";
 
-import { Store } from "@prisma/client";
+import { Farm } from "@prisma/client";
 
 import {
   Check,
@@ -32,31 +32,28 @@ import { CommandSeparator } from "cmdk";
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<
   typeof PopoverTrigger
 >;
-interface StoreComboboxProps extends PopoverTriggerProps {
-  stores: Store[];
+interface FarmComboboxProps extends PopoverTriggerProps {
+  farms: Farm[];
 }
 
-export function StoreCombobox({ stores = [] }: StoreComboboxProps) {
+export function FarmCombobox({ farms = [] }: FarmComboboxProps) {
   const [open, setOpen] = useState(false);
 
   const params = useParams();
   const router = useRouter();
   const storeModal = useModalStore();
 
-  //format the Items<Restaurant> to only use the name prop and id
-  const routes = stores.map((res) => ({
-    label: res.name,
-    value: res.id,
+  const routes = farms.map((farm) => ({
+    label: farm.name,
+    id: farm.id,
   }));
 
-  //find the Store that is currently in the pathname
-  const currentActiveRestaurant = routes.find(
-    (res) => res.value === params?.restaurantId
-  );
+  //find the Farm that is currently in the pathname
+  const activeFarm = routes.find((farm) => farm.id === params?.farmId);
 
-  const handleSelectRes = (restaurant: { label: string; value: string }) => {
+  const handleSelectRes = (farm: { label: string; id: string }) => {
     setOpen(false); //close modal
-    router.push(`/dashboard/restaurants/${restaurant.value}`); //push to selected restaurant
+    router.push(`/dashboard/farms/${farm.id}`); //push to selected farm
   };
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -65,12 +62,12 @@ export function StoreCombobox({ stores = [] }: StoreComboboxProps) {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          aria-label="Select a store"
+          aria-label="Select a farm"
           className="flex flex-row gap-4 border-none min-w-[150px]"
         >
           <StoreIcon size={20} />
 
-          {currentActiveRestaurant && <p>{currentActiveRestaurant.label}</p>}
+          {activeFarm && <p>{activeFarm.label}</p>}
 
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -78,17 +75,17 @@ export function StoreCombobox({ stores = [] }: StoreComboboxProps) {
       <PopoverContent className="max-w-[230px] p-0 border">
         <Command>
           <CommandList>
-            <CommandInput placeholder="Buscar restaurante" />
+            <CommandInput placeholder="My farm" />
 
-            <CommandEmpty>Sin resultados.</CommandEmpty>
+            <CommandEmpty>No results.</CommandEmpty>
 
-            <CommandGroup heading="Tus restaurantes">
+            <CommandGroup heading="Your farms">
               <CommandItem
                 className={cn("cursor-pointer")}
-                onSelect={() => router.push("/dashboard/restaurants")}
+                onSelect={() => router.push("/dashboard/farms")}
               >
                 <StoreIcon size={20} />
-                {!currentActiveRestaurant?.label && (
+                {!activeFarm?.label && (
                   <div className="ml-auto">
                     <Check />
                   </div>
@@ -96,17 +93,15 @@ export function StoreCombobox({ stores = [] }: StoreComboboxProps) {
               </CommandItem>
               {routes.map((route) => (
                 <CommandItem
-                  key={route.value}
+                  key={route.id}
                   onSelect={() => handleSelectRes(route)}
                   className={
                     (cn("text-sm"),
-                    currentActiveRestaurant?.label === route.label
-                      ? "font-bold"
-                      : "")
+                    activeFarm?.label === route.label ? "font-bold" : "")
                   }
                 >
                   {route.label}
-                  {currentActiveRestaurant?.label === route.label && (
+                  {activeFarm?.label === route.label && (
                     <div className="ml-auto">
                       <Check />
                     </div>
@@ -121,12 +116,11 @@ export function StoreCombobox({ stores = [] }: StoreComboboxProps) {
               <CommandItem
                 className="font-bold flex gap-2 cursor-pointer"
                 onSelect={() => {
-                  //activate the create-store modal
-                  storeModal.onOpen("create-store");
+                  storeModal.onOpen("create-initial-farm");
                 }}
               >
                 <PlusSquare />
-                Create Store
+                Create Farm
               </CommandItem>
             </CommandGroup>
           </CommandList>

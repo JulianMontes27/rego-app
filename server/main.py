@@ -1,14 +1,18 @@
-from fastapi import FastAPI, Request, HTTPException, status, Depends, UploadFile, File
+from fastapi import FastAPI, Request, HTTPException, status, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 import logging
 import os
+from pydantic import BaseModel
+
+import httpx
+
+import helpers as hlp
 
 # Load environment variables
 load_dotenv()
-
 # MongoDB Connection
 CONNECTION_STRING = os.getenv("MONGODB_URI")
 
@@ -18,6 +22,7 @@ logger = logging.getLogger(__name__)
 
 # CORS Configuration
 ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "").split(",")
+
 
 # Async lifespan to handle MongoDB connection
 @asynccontextmanager
@@ -41,6 +46,7 @@ async def db_lifespan(app: FastAPI):
     app.mongodb_client.close()
     logger.info("Disconnected from MongoDB.")
 
+
 # Create FastAPI app
 app = FastAPI(
     title="Rego AI API",
@@ -52,8 +58,7 @@ app = FastAPI(
 # Add CORS Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000",     "http://127.0.0.1:3000",
-],  # Your Next.js app URL
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],  # Your Next.js app URL
     allow_credentials=True,  # This is crucial for cookies
     allow_methods=["*"],
     allow_headers=["*"],
@@ -69,6 +74,7 @@ def get_session_token_from_cookie(request: Request) -> str:
             detail="Session token not found in cookies."
         )
     return session_token
+
 
 # Helper: Validate session and fetch user from MongoDB
 async def get_user_from_session(db: AsyncIOMotorDatabase, session_token: str) -> dict:
@@ -89,6 +95,7 @@ async def get_user_from_session(db: AsyncIOMotorDatabase, session_token: str) ->
     
     return user
 
+
 # Dependency: Authenticate user
 async def get_authenticated_user(
     request: Request, db: AsyncIOMotorDatabase = Depends(lambda: app.database)
@@ -97,10 +104,13 @@ async def get_authenticated_user(
     user = await get_user_from_session(db, session_token)
     return user
 
+
+
 # Public Route
 @app.get("/")
 async def root():
     return {"message": "Farm AI API is running."}
+
 
 # Secure Route (requires authentication)
 @app.get("/secure-data/")
@@ -114,17 +124,57 @@ async def secure_data(user: dict = Depends(get_authenticated_user)):
         }
     }
 
-# Endpoint for AI-related tasks
+class ImagePayload(BaseModel): 
+    file_url : str
+
+# Endpoint for processing an image URL
 @app.post("/process-image/")
 async def process_image(
-    user: dict = Depends(get_authenticated_user), file: UploadFile = File(...)
+    payload: ImagePayload, #the file url (image)
+    user: dict = Depends(get_authenticated_user),  # Authenticate the user
 ):
-    # Simulated AI processing logic
-    logger.info(f"Processing image for user {user.get('email')}.")
-    result = {"prediction": "Disease Found"}
+    try:
+        # Log information about the file URL
+        logger.info(f"Processing image for user {user.get('email')}")
+        logger.info(f"Received file URL: {payload.file_url}")
 
-    # Return the result to the Next.js app
-    return {"status": "success", "result": result}
+        # Use httpx to fetch the image content asynchronously
+        # It allows you to fetch the image from the URL provided in the request without blocking the FastAPI server.
+        async with httpx.AsyncClient() as client:
+            response = await client.get(payload.file_url)
+
+        # Check if the image URL returned a valid response
+        if response.status_code != 200:
+            raise HTTPException(status_code=400, detail="Failed to fetch the image from URL.")
+
+        # Read the image content (binary data)
+        image_content = response.content
+        logger.info(f"Image fetched successfully, size: {len(image_content)} bytes")
+
+        #validate image
+        image= hlp.verifyImageBytes(image_content)
+
+        # Step 2: Preprocess the image
+        processed_image = hlp.preprocess_image(image, (220,220))
+
+        # Simulate AI processing logic
+        
+
+
+        # Example: Validate the file URL or perform AI analysis on the remote image
+        result = {"prediction": "Disease Found", "file_url": payload.file_url}
+
+        # Return the result
+        return {"status": "success", "result": result}
+    
+    except httpx.HTTPStatusError as e:
+        logger.error(f"HTTP error occurred while fetching the image: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch the image from the URL.")
+
+    except Exception as e:
+        logger.error(f"Error processing image: {e}")
+        raise HTTPException(status_code=500, detail="Failed to process the image.")
+
 
 # Run the server
 if __name__ == "__main__":

@@ -33,18 +33,21 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-const CreateBrandFormSchema = z.object({
+const CreateInitialFarmModalSchema = z.object({
   name: z.string().min(2, {
-    message: "Server name must be at least 2 characters.",
+    message: "Farm name must be at least 2 characters.",
   }),
-  logoUrl: z.string().min(1, {
+  size: z.string().min(1, {
     message: "Server image is required.",
+  }),
+  location: z.string().min(1, {
+    message: "Must be a city, address, or postal code.",
   }),
 });
 
-type CreateBrandFormType = z.infer<typeof CreateBrandFormSchema>;
+type CreateFarmFormType = z.infer<typeof CreateInitialFarmModalSchema>;
 
-export default function CreateServerModal() {
+export default function CreateInitialFarmModal() {
   const { isOpen, onClose, modalType } = useModalStore();
   const handleClose = () => {
     onClose();
@@ -52,21 +55,22 @@ export default function CreateServerModal() {
   const router = useRouter();
 
   // 1. Define your form.
-  const form = useForm<CreateBrandFormType>({
-    resolver: zodResolver(CreateBrandFormSchema),
+  const form = useForm<CreateFarmFormType>({
+    resolver: zodResolver(CreateInitialFarmModalSchema),
     defaultValues: {
       name: "",
-      logoUrl: "",
+      size: "",
+      location: "",
     },
   });
 
   // 2. Define a submit handler.
-  async function onSubmit(values: CreateBrandFormType) {
+  async function onSubmit(values: CreateFarmFormType) {
     try {
-      await axios.post(`/api/brands`, values);
+      await axios.post(`/api/farms`, values);
       form.reset();
       router.refresh();
-      toast.success("Created succesfully.");
+      toast.success("Farm created succesfully!");
 
       onClose();
     } catch (error) {
@@ -79,19 +83,19 @@ export default function CreateServerModal() {
   return (
     <>
       <Dialog
-        open={isOpen && modalType === "create-initial-brand"}
+        open={isOpen && modalType === "create-initial-farm"}
         onOpenChange={handleClose}
       >
         <DialogContent className="bg-white text-black sm:max-w-[425px] overflow-hidden rounded-md">
           <DialogHeader className="py-3 px-3">
             <DialogTitle className="font-bold text-2xl mb-2">
-              Create a Brand
+              Create a Farm
             </DialogTitle>
             <DialogDescription className="flex flex-col w-full items-star gap-2"></DialogDescription>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <FormField
+              {/* <FormField
                 control={form.control}
                 name="logoUrl"
                 render={({ field }) => (
@@ -110,7 +114,7 @@ export default function CreateServerModal() {
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
               <FormField
                 control={form.control}
                 name="name"
@@ -125,7 +129,49 @@ export default function CreateServerModal() {
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription>Name your Brand.</FormDescription>
+                    <FormDescription>The name of your farm.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="size"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Size</FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={form.formState.isSubmitting}
+                        placeholder="4"
+                        className="bg-white"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Approximate size of your farm (in acres).
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />{" "}
+              <FormField
+                control={form.control}
+                name="location"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Location</FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={form.formState.isSubmitting}
+                        placeholder="Montana"
+                        className="bg-white"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      The location of your farm.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -136,7 +182,7 @@ export default function CreateServerModal() {
                 type="submit"
                 className="w-full text-white bg-indigo-500 hover:bg-indigo-500/90"
               >
-                Create Brand
+                Create Farm
               </Button>
             </form>
           </Form>

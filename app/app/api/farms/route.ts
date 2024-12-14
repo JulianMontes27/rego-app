@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
-//route handler to create a Brand
+//route handler to create a Farm
 export async function POST(req: NextRequest) {
   try {
     //check if the user is authenticated
@@ -13,17 +13,24 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { name, logoUrl } = body;
+    const { name, size, location } = body;
 
     if (!name) {
       return new NextResponse("Name is required", { status: 400 });
     }
+    if (!size) {
+      return new NextResponse("Name is required", { status: 400 });
+    }
+    if (!location) {
+      return new NextResponse("Name is required", { status: 400 });
+    }
     //if everything is validated...
-    const store = await prisma.brand.create({
+    const store = await prisma.farm.create({
       data: {
+        userId: userId,
         name,
-        logo: logoUrl ? logoUrl : null,
-        ownerId: userId,
+        size,
+        location,
       },
     });
     return NextResponse.json(store);

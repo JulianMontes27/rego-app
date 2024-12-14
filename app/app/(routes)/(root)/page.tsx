@@ -13,9 +13,9 @@ export default async function CreateRestaurantModalPage() {
     return <LandingPage />;
   }
   //check if the User has a Restaurant created, if he has at least one, redirect to the /dashboard page of the first Restaurant found, if not, open the modal to create a Restaurant
-  const store = await prisma.brand.findFirst({
+  const store = await prisma.farm.findFirst({
     where: {
-      ownerId: user.id,
+      userId: user.id,
     },
   });
   if (store) {

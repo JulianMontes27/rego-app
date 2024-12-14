@@ -3,7 +3,7 @@ import UserButton from "../auth/user-button";
 
 import { MobileNav } from "./mobile-nav";
 import MainNav from "./main-nav";
-import { StoreCombobox } from "./store-combobox";
+import { StoreCombobox } from "./farm-combobox";
 
 import prisma from "@/lib/prisma";
 

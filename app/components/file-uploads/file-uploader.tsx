@@ -9,7 +9,7 @@ import "@uploadthing/react/styles.css";
 import { FileIcon, Trash } from "lucide-react";
 
 interface FileUploaderProps {
-  onChange: (url?: string) => void;
+  onChange: (url: string) => void;
   value: string;
   endpoint: "messageFile" | "brandLogoImage";
 }
@@ -69,7 +69,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
         onChange(res?.[0].url); //this is the field.onchange from the modal-form
       }}
       onUploadError={(error: Error) => {
-        alert(`ERROR! ${error.message}`);
+        alert(`Error uploading image: ${error.message}`);
       }}
     />
   );

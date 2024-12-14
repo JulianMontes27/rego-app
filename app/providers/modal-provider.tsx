@@ -2,15 +2,16 @@
 
 import { useState, useEffect } from "react";
 
-import CreateInitialRestaurant from "@/components/modals/brands/create-initial-brand";
-import CreateTableModal from "@/components/modals/create-table";
+import CreateInitialFarmModal from "@/components/modals/farms/create-initial-farm";
+import CreateFieldModal from "@/components/modals/fields/create-field-modal";
 import InitiateBillModal from "@/components/modals/initiate-bill";
 import AddOrderModal from "@/components/modals/add-order-modal";
 import ShowOrdersModal from "@/components/modals/show-orders-modal";
-import DeleteRestaurantModal from "@/components/modals/brands/delete-modal";
-import UpdateRestaurantModal from "@/components/modals/brands/update-restaurant-modal";
+import DeleteRestaurantModal from "@/components/modals/farms/delete-modal";
+import UpdateRestaurantModal from "@/components/modals/farms/update-restaurant-modal";
 import UpdateTableModal from "@/components/modals/tables/update-table-modal";
 import DeleteTableModal from "@/components/modals/tables/delete-table-modal";
+import UploadImageToScanModal from "@/components/modals/fields/upload-image-to-scan";
 
 const ModalProvider = () => {
   const [isMounted, setisMounted] = useState(false);
@@ -23,15 +24,11 @@ const ModalProvider = () => {
   }
   return (
     <div className="">
-      <CreateInitialRestaurant />
-      <CreateTableModal />
+      <CreateInitialFarmModal />
+      <CreateFieldModal />
       <InitiateBillModal />
+      <UploadImageToScanModal />
       <AddOrderModal />
-      <ShowOrdersModal />
-      <DeleteRestaurantModal />
-      <UpdateRestaurantModal />
-      <UpdateTableModal />
-      <DeleteTableModal />
     </div>
   );
 };

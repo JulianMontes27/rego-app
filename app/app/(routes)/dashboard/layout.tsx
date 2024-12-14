@@ -1,5 +1,10 @@
 import Sidebar from "@/components/dashboard/dashboard-sidebar";
-import { User as UserIcon, House, ChefHat, Building2 } from "lucide-react";
+import {
+  User as UserIcon,
+  House,
+  Flower2,
+  Tractor,
+} from "lucide-react";
 
 import { MobileSidebar } from "@/components/dashboard/mobile-sidebar";
 
@@ -20,14 +25,14 @@ export const routes: RouteList = [
     icon: <House />,
   },
   {
-    href: `/dashboard/brands`,
-    title: "Brands",
-    icon: <Building2 />,
+    href: `/dashboard/farms`,
+    title: "Farms",
+    icon: <Tractor />,
   },
   {
-    href: `/dashboard/stores`,
-    title: "Stores",
-    icon: <ChefHat />,
+    href: `/dashboard/fields`,
+    title: "Fields",
+    icon: <Flower2 />,
   },
 
   {
@@ -52,7 +57,6 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = async ({
           <div className="flex flex-row gap-4 bg-white ">
             <MobileSidebar routes={routes} />
             <h1>LOGO</h1>
-            
           </div>
           <div className="flex-1 flex justify-end">Data</div>
         </div>

@@ -1,15 +1,16 @@
 "use client";
+
 import useModalStore from "@/hooks/use-store-modal";
 import { Button } from "@/components/ui/button";
 
-const CreateStoreButton = () => {
+const CreateFieldBtn = () => {
   const { onOpen } = useModalStore();
 
   return (
-    <Button variant={"outline"} onClick={() => onOpen("create-store")}>
-      Crear nueva Mesa
+    <Button variant={"outline"} onClick={() => onOpen("create-field")}>
+      Add field
     </Button>
   );
 };
 
-export default CreateStoreButton;
+export default CreateFieldBtn;
