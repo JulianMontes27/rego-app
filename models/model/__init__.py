@@ -1,0 +1,1 @@
+# The __init__.py files are required to make Python treat directories containing the file as packages (unless using a namespace package, a relatively advanced feature). This prevents directories with a common name, such as string , from unintentionally hiding valid modules that occur later on the module search path.

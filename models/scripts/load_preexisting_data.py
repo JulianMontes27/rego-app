@@ -1,6 +1,30 @@
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 
+def load_preexisting_dataset(dataset_name="CIFAR10", batch_size=32):
+    # Define transformations
+    transform = transforms.Compose([
+        transforms.ToTensor(),  # Convert to tensor
+        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))  # Normalize (mean, std) for each channel
+    ])
+
+    # Load the dataset
+    if dataset_name == "CIFAR10":
+        train_dataset = datasets.CIFAR10(root="../data", train=True, download=True, transform=transform)
+        val_dataset = datasets.CIFAR10(root="../data", train=False, download=True, transform=transform)
+    elif dataset_name == "MNIST":
+        train_dataset = datasets.MNIST(root="../data", train=True, download=True, transform=transform)
+        val_dataset = datasets.MNIST(root="../data", train=False, download=True, transform=transform)
+    else:
+        raise ValueError("Unsupported dataset. Try 'CIFAR10' or 'MNIST'.")
+
+    # Create DataLoaders
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+
+    return train_loader, val_loader
+
+
 # Sure! Preprocessing the data is a critical step in preparing a dataset for training a machine learning model. Let's break it down:
 
 # ---
@@ -114,27 +138,3 @@ from torch.utils.data import DataLoader
 # \[
 # [0.002, -0.498, 0.568]
 # \]
-
-
-def load_preexisting_dataset(dataset_name="CIFAR10", batch_size=32):
-    # Define transformations
-    transform = transforms.Compose([
-        transforms.ToTensor(),  # Convert to tensor
-        transforms.Normalize((0.5,), (0.5,))  # Normalize images
-    ])
-
-    # Load the dataset
-    if dataset_name == "CIFAR10":
-        train_dataset = datasets.CIFAR10(root="./data", train=True, download=True, transform=transform)
-        val_dataset = datasets.CIFAR10(root="./data", train=False, download=True, transform=transform)
-    elif dataset_name == "MNIST":
-        train_dataset = datasets.MNIST(root="./data", train=True, download=True, transform=transform)
-        val_dataset = datasets.MNIST(root="./data", train=False, download=True, transform=transform)
-    else:
-        raise ValueError("Unsupported dataset. Try 'CIFAR10' or 'MNIST'.")
-
-    # Create DataLoaders
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
-
-    return train_loader, val_loader

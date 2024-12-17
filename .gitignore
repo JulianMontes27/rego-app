@@ -1,2 +1,8 @@
 .env
 .env.local
+/models/model/notes.txt
+/models/data/
+/models/checkpoints
+
+
+
