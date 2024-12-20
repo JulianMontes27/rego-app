@@ -1,16 +1,29 @@
 import torch.nn as nn
 import torch.nn.functional as F
 
+#
+
 class CNN(nn.Module):
     def __init__(self):
         super(CNN, self).__init__()
+        #convolutional layer 1
         self.conv1 = nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1)
+        #convolutional layer 2
         self.conv2 = nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1)
+        
+        #Effect: reduce the spatial dimensions (HxW) by half
+        #Shape change: Input: (N,64,32,32) ; Output: (64, 32, 32)
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
+        
         self.fc1 = nn.Linear(64 * 16 * 16, 128)  # Ensure correct input size
-        self.fc2 = nn.Linear(128, 10)  # 10 classes for CIFAR-10
+        self.fc2 = nn.Linear(128, 10)  # output should match the number of classes of the dataset (10 classes for CIFAR-10)
 
     def forward(self, x):
+        # x is the input tensor, which is a bach of images of shape (N, C, H, W):
+        # N: Batch size (number of images processed at once)
+        # C: Number of channels (e.g.,3 for RGB images)
+        # H: Height of the image (e.g.,32 pixels for CIFAR-10)
+        # W: Width of the image (e.g., 32 pixels for CIFAR-10)
         x = F.relu(self.conv1(x))
         x = self.pool(F.relu(self.conv2(x)))
         x = x.view(x.size(0), -1)  # Flatten for fully connected layer
