@@ -35,8 +35,10 @@ print("Starting training...")
 checkpoint_path = os.path.join(checkpoint_dir, 'latest_checkpoint.pth')
 start_epoch = 0
 
+#load from checkpoint, if it exists
 if os.path.exists(checkpoint_path):
     print("Checkpoint found. Resuming training...")
+    #load the checkpoint file
     checkpoint = torch.load(checkpoint_path)
     model.load_state_dict(checkpoint['model_state_dict'])
     optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
@@ -71,6 +73,7 @@ for epoch in range(start_epoch, num_epochs):
     print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {running_loss/len(train_loader):.4f}")
 
     # Save model checkpoint at each epoch
+    #.pth are files containing a serialized Pytorch state dictionary, including the models current weights, biases, and other params.
     checkpoint_path = os.path.join(checkpoint_dir, 'latest_checkpoint.pth')
     torch.save({
         'epoch': epoch + 1,
